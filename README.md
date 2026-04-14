@@ -297,3 +297,49 @@ flowchart TD
 
 #### System Flow Justification
 The System Flow Diagram illustrates the high-level navigation and interaction path of a developer within the platform. It demonstrates how users move through the core platform workflow from authentication to project completion.
+
+## 🧰 Tech Stack
+
+### Backend
+- **Framework:** Flask (Python)
+- **Architecture:** Application Factory Pattern with layered separation (routes, services, models)
+- **Database:** PostgreSQL (production) / SQLite (development & testing)
+- **ORM:** SQLAlchemy
+- **Authentication:** JWT (flask‑jwt‑extended) + bcrypt password hashing
+- **Testing:** pytest + pytest‑flask
+
+### Frontend
+- **Framework:** React 18 with Vite
+- **Styling:** Tailwind CSS (custom green/black/white theme)
+- **Animations:** Framer Motion
+- **HTTP Client:** Axios with JWT interceptors
+- **Routing:** React Router DOM
+- **Notifications:** React Hot Toast
+
+### DevOps & CI/CD
+- **Version Control:** Git & GitHub
+- **CI Pipeline:** GitHub Actions (runs pytest for backend and build verification for frontend on every push)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Python 3.11+
+- Node.js 20+
+- PostgreSQL (optional for development; SQLite works out of the box)
+
+### Backend Setup
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate      # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+# Create .env file from example
+cp .env.example .env
+# Edit .env with your secret keys and database URL
+
+flask db upgrade               # Apply migrations
+flask run
