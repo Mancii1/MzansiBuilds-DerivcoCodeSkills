@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { FaHeart } from 'react-icons/fa';
 import { toggleLike } from '../../api/likes';
 import { useAuth } from '../../hooks/useAuth';
@@ -29,14 +30,17 @@ const LikeButton = ({ projectId, initialLikes = 0, initialLiked = false }) => {
   };
 
   return (
-    <button
+    <motion.button
       onClick={handleToggle}
       disabled={loading}
       className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors"
+      whileTap={{ scale: 0.85 }}
+      animate={{ scale: liked ? [1, 1.3, 1] : 1 }}
+      transition={{ duration: 0.2 }}
     >
       <FaHeart className={liked ? 'text-red-500' : ''} />
       <span>{likesCount}</span>
-    </button>
+    </motion.button>
   );
 };
 

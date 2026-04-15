@@ -1,37 +1,19 @@
-import { useState, useEffect } from 'react';
-import { getProjects } from '../../api/projects';
+import { useProjects } from '../../hooks/useProjects';
 import ProjectCard from './ProjectCard';
-import Spinner from '../common/Spinner';
+import SkeletonCard from '../common/SkeletonCard';
 
 const ProjectFeed = ({ limit }) => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data, isLoading, error } = useProjects({ per_page: limit || 6 });
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const { data } = await getProjects({ per_page: limit || 6 });
-        setProjects(data.items);
-      } catch (err) {
-        console.error('Failed to fetch projects:', err);
-        setError('Could not load projects');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProjects();
-  }, [limit]);
-
-  if (loading) return <Spinner />;
-  if (error) return <div className="text-red-500 text-center">{error}</div>;
-  if (projects.length === 0) return <div className="text-gray-500 text-center">No projects yet.</div>;
+  if (error) return <div className="text-red-500 text-center">Could not load projects</div>;
+  if (!isLoading && (!data || data.items.length === 0))
+    return <div className="text-gray-500 text-center">No projects yet.</div>;
 
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} />
-      ))}
+      {isLoading
+        ? Array.from({ length: limit || 6 }).map((_, i) => <SkeletonCard key={i} />)
+        : data.items.map((project) => <ProjectCard key={project.id} project={project} />)}
     </div>
   );
 };
