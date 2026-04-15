@@ -15,7 +15,7 @@ def request_collaboration(project_id):
 
     req, error = CollaborationService.create_request(user_id, project_id, message)
     if error:
-        status_code = 400 if "already have" in error or "own project" in error else 404
+        status_code = 400 if "already" in error or "own project" in error else 404
         return jsonify({"error": error}), status_code
 
     return jsonify(req.to_dict()), 201
@@ -26,7 +26,7 @@ def request_collaboration(project_id):
 def get_incoming_requests():
     """Get collaboration requests for projects owned by current user."""
     user_id = int(get_jwt_identity())
-    status = request.args.get("status")  # optional filter
+    status = request.args.get("status")
     requests, error = CollaborationService.get_incoming_requests(user_id, status)
     return jsonify(requests), 200
 

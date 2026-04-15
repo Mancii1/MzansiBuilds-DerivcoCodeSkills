@@ -8,14 +8,18 @@ class CollaborationRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
     requester_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    status = db.Column(db.String(20), nullable=False, default="pending")  # pending, accepted, rejected
+    status = db.Column(db.String(20), nullable=False, default="pending")
     message = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    project = db.relationship("Project", backref=db.backref("collaboration_requests", lazy="dynamic", cascade="all, delete-orphan"))
-    requester = db.relationship("User", backref=db.backref("sent_requests", lazy="dynamic", cascade="all, delete-orphan"))
+    project = db.relationship(
+        "Project", backref=db.backref("collaboration_requests", lazy="dynamic", cascade="all, delete-orphan")
+    )
+    requester = db.relationship(
+        "User", backref=db.backref("sent_requests", lazy="dynamic", cascade="all, delete-orphan")
+    )
 
     VALID_STATUSES = ["pending", "accepted", "rejected"]
 

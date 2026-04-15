@@ -17,14 +17,18 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
+    # Initialise extensions
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app)  # Enable CORS for frontend development
+    cors.init_app(app)
 
-    # Register blueprints (will be added later)
-    from app.routes import auth_bp, profile_bp, projects_bp, comments_bp, likes_bp, collaborations_bp, milestones_bp
+    # Register blueprints (inside factory!)
+    from app.routes import (
+        auth_bp, profile_bp, projects_bp, comments_bp,
+        likes_bp, collaborations_bp, milestones_bp
+    )
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(projects_bp)
@@ -33,11 +37,14 @@ def create_app(config_name=None):
     app.register_blueprint(collaborations_bp)
     app.register_blueprint(milestones_bp)
 
+    # Register error handlers
     register_error_handlers(app)
 
+    # Setup logging for production
     if not app.debug and not app.testing:
         setup_logging(app)
 
+    # Simple health check endpoint
     @app.route("/health")
     def health():
         return {"status": "ok"}, 200
@@ -49,7 +56,6 @@ def register_error_handlers(app):
     """Global error handling."""
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):
-        """Return JSON for HTTP errors."""
         response = {
             "code": e.code,
             "name": e.name,
@@ -59,7 +65,6 @@ def register_error_handlers(app):
 
     @app.errorhandler(Exception)
     def handle_generic_exception(e):
-        """Catch-all for unhandled exceptions."""
         app.logger.error(f"Unhandled exception: {e}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
@@ -80,4 +85,3 @@ def setup_logging(app):
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info("MzansiBuilds startup")
-
